@@ -10,7 +10,7 @@ test.describe("SauceDemo", () => {
   test.beforeEach(async ({ page }) => {
       usernameInput = page.getByPlaceholder("Username");
       passwordInput = page.getByPlaceholder("Password");
-      loginButton = page.getByRole("button", { name: "Login"});
+      loginButton = page.getByRole("button", { name: "Login" });
   });
 
   test.describe("SauceDemo Login Tests", () => {
@@ -55,12 +55,13 @@ test.describe("SauceDemo", () => {
       await loginButton.click();
     })
 
-    test("Add product to cart", async ({ page }) => {
+    test("Add products to cart", async ({ page }) => {
       await page.getByRole("button", { name: "Add to cart" }).nth(1).click();
+      await page.getByRole("button", { name: "Add to cart" }).nth(2).click();
       await expect(
         page.locator(".shopping_cart_badge"),
-        "Cart badge should show 1 after adding a product"
-      ).toHaveText("1");
+        "Cart badge should show 2 after adding two products"
+      ).toHaveText("2");
     });
 
     test("Remove product from cart", async ({ page }) => {
@@ -107,4 +108,36 @@ test.describe("SauceDemo", () => {
       await expect(page.locator(".shopping_cart_badge")).toHaveText("1");
     });
   });
+
+  test.describe("SauceDemo Checkout Tests", () => {
+    test.beforeEach(async () => {
+      await usernameInput.fill("standard_user");
+      await passwordInput.fill("secret_sauce");
+      await loginButton.click();
+    })
+
+    test("Checkout process", async ({ page }) => {
+      await page.getByRole("button", { name: "Add to cart" }).nth(4).click();
+      await page.getByRole("button", { name: "Add to cart" }).nth(3).click();
+
+      await page.locator('[data-test="shopping-cart-link"]').click();
+      await page.locator('[data-test="checkout"]').click();
+
+      await page.locator('[data-test="firstName"]').fill('Bob');
+      await page.locator('[data-test="lastName"]').fill('One');
+      await page.locator('[data-test="postalCode"]').fill('12345');
+
+      await page.locator('[data-test="continue"]').click();
+      await page.locator('[data-test="finish"]').click();
+
+      await expect(
+        page.locator('[data-test="complete-header"]')
+      ).toHaveText('Thank you for your order!');
+
+        
+    });
+  })
+    
+
+  
 })
