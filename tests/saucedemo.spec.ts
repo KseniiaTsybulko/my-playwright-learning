@@ -10,7 +10,7 @@ test.describe("SauceDemo", () => {
   test.beforeEach(async ({ page }) => {
       usernameInput = page.getByPlaceholder("Username");
       passwordInput = page.getByPlaceholder("Password");
-      loginButton = page.getByRole("button", { name: "Login" });
+      loginButton = page.getByRole("button", { name: "Login"});
   });
 
   test.describe("SauceDemo Login Tests", () => {
@@ -19,8 +19,16 @@ test.describe("SauceDemo", () => {
       await passwordInput.fill("secret_sauce");
       await loginButton.click();
       await expect(page).toHaveURL(/inventory/);
-    });
+  });
 
+    test("login locked user", async ({ page }) => {
+      await usernameInput.fill("locked_out_user");
+      await passwordInput.fill("secret_sauce");
+      await loginButton.click();
+      await expect(
+        page.locator('[data-test="error"]'),
+      ).toHaveText('Epic sadface: Sorry, this user has been locked out.');
+    });
 
     test("Login with wrong password", async ({ page }) => {
       await usernameInput.fill("standard_user");
@@ -99,5 +107,4 @@ test.describe("SauceDemo", () => {
       await expect(page.locator(".shopping_cart_badge")).toHaveText("1");
     });
   });
-
-});
+})
