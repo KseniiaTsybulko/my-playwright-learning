@@ -1,9 +1,13 @@
 import { test, expect, Locator } from "@playwright/test";;
+import { LoginPage } from "../pages/LoginPage";
+
 
 test.describe("SauceDemo", () => {
   let usernameInput: Locator, passwordInput: Locator, loginButton: Locator;
+  let loginPage: LoginPage;
 
   test.beforeEach(async ({ page }) => {
+    loginPage = new LoginPage(page);
     await page.goto("https://www.saucedemo.com");
   });
 
